@@ -1,0 +1,22 @@
+[
+  {
+    "material": "PLA",
+    "name": "Fire Red",
+    "color": "#FF0000"
+  },
+  {
+    "material": "PLA",
+    "name": "Dark Blue",
+    "color": "#0000FF"
+  },
+  {
+    "material": "PLA",
+    "name": "Pure White",
+    "color": "#FFFFFF"
+  },
+  {
+    "material": "PETG",
+    "name": "Shiny black",
+    "color": "#000000"
+  }
+]
