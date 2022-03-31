@@ -1,0 +1,158 @@
+.NavbarItems {
+  background: linear-gradient(
+    90deg,
+    rgb(110, 94, 254) 0%,
+    rgba(73, 63, 252, 1) 100%
+  );
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70px;
+
+  z-index: 1;
+  width: 100%;
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+
+.mainDiv {
+  margin-top: 80px;
+}
+
+.navbar-logo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin-top: 10px;
+  margin-left: 20px;
+}
+
+.navbar-logo {
+  color: #fff;
+  justify-self: start;
+  cursor: pointer;
+}
+
+.navbar-logo a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.appCaption {
+  font-size: 40px;
+}
+
+.appIcon {
+  height: 40px;
+  padding-top: 10px;
+  margin-left: 1.5rem;
+}
+
+.nav-menu {
+  display: grid;
+  grid-template-columns: repeat(5, auto);
+  grid-gap: 10px;
+  list-style: none;
+  text-align: center;
+  width: 70vw;
+  justify-content: end;
+  margin-right: 2rem;
+}
+
+.nav-links {
+  color: white;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+}
+
+.nav-links:hover {
+  background-color: #6d76f7;
+  border-radius: 4px;
+  transition: all 0.2s ease-out;
+}
+
+.fa-bars {
+  color: #fff;
+}
+
+.nav-links-mobile {
+  display: none;
+}
+
+.menu-icon {
+  display: none;
+}
+
+@media screen and (max-width: 800px) {
+  .nav-menu {
+    background-color: #6668f4;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    position: absolute;
+    top: 54px;
+    left: -100%;
+    opacity: 1;
+    transition: all 0.5s ease;
+  }
+
+  .nav-menu.active {
+    background-color: #6668f4;
+    left: 0;
+    opacity: 1;
+    transition: all 0.5s ease;
+    z-index: 1;
+  }
+
+  .nav-links {
+    text-align: center;
+    padding: 2rem;
+    width: 100%;
+    display: table;
+  }
+
+  .nav-links:hover {
+    background-color: #7577fa;
+    border-radius: 0;
+  }
+
+  .menu-icon {
+    display: block;
+    position: absolute;
+    top: -15px;
+    right: 0;
+    transform: translate(-100%, 60%);
+    font-size: 2.2rem;
+    cursor: pointer;
+  }
+
+  .fa-times {
+    color: #fff;
+    font-size: 2.6rem;
+    transform: translate(-30%, 0%);
+  }
+
+  .nav-links-mobile {
+    display: block;
+    text-align: center;
+    padding: 1.5rem;
+    margin: 2rem auto;
+    border-radius: 4px;
+    width: 100%;
+    background: #4ad9e4;
+    text-decoration: none;
+    color: white;
+    font-size: 1.5rem;
+  }
+
+  .nav-links-mobile:hover {
+    background: white;
+    color: #6568fa;
+    transition: 250ms;
+  }
+
+  Button {
+    display: none;
+  }
+}

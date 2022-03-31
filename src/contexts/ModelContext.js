@@ -11,9 +11,14 @@ export default function ModelProvider(props) {
   const [fileName, setFileName] = useState("");
 
   const [modelSize, setSize] = useState();
+  const [metaData, setMetadata] = useState();
 
   const setModelSize = (size) => {
     setSize(size);
+  };
+
+  const setMetaData = (meta) => {
+    setMetadata(meta);
   };
 
   const loadModel = async (fileName, file) => {
@@ -52,9 +57,11 @@ export default function ModelProvider(props) {
     fileName,
     modelFile,
     modelSize,
+    metaData,
     loadModel,
     clearModel,
     setModelSize,
+    setMetaData,
   };
   return <CtxProvider value={contextValue}>{props.children}</CtxProvider>;
 }

@@ -27,6 +27,7 @@ export default function AppViewer() {
     loadTheModel();
     startAnimationLoop();
     // window.addEventListener("resize", handleWindowResize);
+
     return () => {
       //   window.removeEventListener("resize", handleWindowResize);
       //   window.cancelAnimationFrame(requestID);
@@ -58,7 +59,7 @@ export default function AppViewer() {
   const loadTheModel = async () => {
     const file = modelFile;
     if (!file) {
-      console.log("no file");
+      //   console.log("no file");
       return;
     }
 

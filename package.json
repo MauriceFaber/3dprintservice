@@ -3,11 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "base-64": "^1.0.0",
+    "cura-wasm": "^1.5.2",
+    "cura-wasm-definitions": "^1.5.1",
     "drei": "^2.2.21",
+    "file-to-array-buffer": "^1.0.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "5.0.0",
-    "react-three-fiber": "^6.0.13"
+    "react-three-fiber": "^6.0.13",
+    "three-gcode-loader": "^1.0.7"
   },
   "scripts": {
     "start": "PORT=3007 react-scripts start",

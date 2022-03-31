@@ -10,10 +10,11 @@ export default function MaterialProvider(props) {
   useEffect(() => {
     let filaments = require("./materials.json");
     setMaterials(filaments);
+    // console.log(filaments);
   }, []);
 
   useEffect(() => {
-    console.log(materials);
+    // console.log(materials);
     if (materials) {
       setCurrentMaterial(materials[0]);
     }
