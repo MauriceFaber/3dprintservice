@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import * as THREE from "three";
+import * as THREE from "@three";
 import { useModel } from "../contexts/ModelContext";
 import { STLLoader } from "@three/examples/jsm/loaders/STLLoader";
 import { useMaterial } from "../contexts/MaterialContext";
@@ -8,7 +8,7 @@ import { RectAreaLightHelper } from "@three/examples/jsm/helpers/RectAreaLightHe
 import { CuraWASM } from "cura-wasm";
 import { resolveDefinition } from "cura-wasm-definitions";
 import fileToArrayBuffer from "file-to-array-buffer";
-// import { GCodeLoader } from "three/examples/jsm/loaders/GCodeLoader";
+// import { GCodeLoader } from "@three/examples/jsm/loaders/GCodeLoader";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCube } from "@fortawesome/free-solid-svg-icons";
