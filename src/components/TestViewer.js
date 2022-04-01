@@ -12,7 +12,9 @@ import fileToArrayBuffer from "file-to-array-buffer";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCube } from "@fortawesome/free-solid-svg-icons";
-import TWEEN, { Tween } from "tween";
+import TWEEN from "tween";
+
+import "../index.css";
 
 let mesh;
 let sphere;
@@ -393,7 +395,6 @@ export default function TestViewer() {
         camera.lookAt(center);
 
         const col = document.getElementsByClassName("fullSpace");
-        console.log(col);
         col[0].style.transition = "none";
         col[0].style.opacity = 1;
         col[0].classList.add("fadeInAnim");

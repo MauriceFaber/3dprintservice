@@ -82,7 +82,6 @@ export default function Demo() {
   const groupedMaterials = groupBy(materials, "material");
 
   if (hasModel) {
-    // console.log(materials);
     return (
       <div className="printControl" id="printControlSection">
         <small className="bottomRightFixed">
