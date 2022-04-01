@@ -11,6 +11,7 @@ export default function ModelProvider(props) {
   const [fileName, setFileName] = useState("");
 
   const [modelSize, setSize] = useState();
+  const [progress, setProgressIntern] = useState(0);
   const [metaData, setMetadata] = useState();
 
   const setModelSize = (size) => {
@@ -19,6 +20,10 @@ export default function ModelProvider(props) {
 
   const setMetaData = (meta) => {
     setMetadata(meta);
+  };
+
+  const setProgress = (perc) => {
+    setProgressIntern(perc);
   };
 
   const loadModel = async (fileName, file) => {
@@ -58,10 +63,12 @@ export default function ModelProvider(props) {
     modelFile,
     modelSize,
     metaData,
+    progress,
     loadModel,
     clearModel,
     setModelSize,
     setMetaData,
+    setProgress,
   };
   return <CtxProvider value={contextValue}>{props.children}</CtxProvider>;
 }

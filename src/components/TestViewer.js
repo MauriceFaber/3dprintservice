@@ -11,18 +11,25 @@ import { decode as atob, encode as btoa } from "base-64";
 import fileToArrayBuffer from "file-to-array-buffer";
 import { GCodeLoader } from "three/examples/jsm/loaders/GCodeLoader";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCube } from "@fortawesome/free-solid-svg-icons";
+import TWEEN, { Tween } from "tween";
+
 let mesh;
+let sphere;
+let scene;
+let initialized = false;
+let camera;
+var renderer;
 export default function TestViewer() {
-  const { modelFile, setModelSize, setMetaData } = useModel();
+  const { modelFile, setModelSize, setMetaData, setProgress, loadModel } =
+    useModel();
   const { currentMaterial } = useMaterial();
 
   const mountRef = useRef(null);
 
-  var renderer;
   let width;
-  let scene;
   let height;
-  let camera;
   let name;
 
   // obj - your object (THREE.Object3D or derived)
@@ -48,25 +55,11 @@ export default function TestViewer() {
     obj.rotateOnAxis(axis, theta); // rotate the OBJECT
   }
 
-  var animate = function () {
+  var animate = function (time) {
     requestAnimationFrame(animate);
-    if (mesh) {
-      rotateAboutPoint(
-        mesh,
-        new THREE.Vector3(0, 0, 0),
-        new THREE.Vector3(1, 1, 1),
-        THREE.Math.degToRad(0.04)
-      );
-    }
+    TWEEN.update();
     renderer.render(scene, camera);
   };
-
-  useEffect(async () => {
-    console.log("file changed");
-    if (modelFile) {
-      await loadFile();
-    }
-  }, [modelFile]);
 
   const handleWindowResize = () => {
     width = mountRef.current.clientWidth;
@@ -78,48 +71,74 @@ export default function TestViewer() {
 
   useEffect(async () => {
     setMaterial();
-    console.log("material changed");
   }, [currentMaterial]);
 
-  useEffect(() => {
+  function initialize() {
+    if (initialized) {
+      return;
+    }
+    width = mountRef.current.clientWidth;
+    height = mountRef.current.clientHeight;
+    scene = new THREE.Scene();
+
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+
+    renderer.setSize(width, height);
+    let backgroundColor = 0x888888;
+    backgroundColor = 0xffffff;
+    renderer.setClearColor(backgroundColor, 1);
+    camera = new THREE.PerspectiveCamera(
+      20, // fov = field of view
+      width / height, // aspect ratio
+      0.1, // near plane
+      4000 // far plane
+    );
+    camera.position.z = 1;
+    camera.position.x = 100;
+    mountRef.current.appendChild(renderer.domElement);
+    new OrbitControls(camera, renderer.domElement);
+    initialized = true;
+  }
+
+  useEffect(async () => {
     if (!modelFile) {
-      window.removeEventListener("resize", handleWindowResize);
-      mountRef.current.innerHTML = "";
-    } else if (modelFile && mountRef.current) {
-      window.addEventListener("resize", handleWindowResize);
-      console.log("file changed");
-      width = mountRef.current.clientWidth;
-      height = mountRef.current.clientHeight;
-      scene = new THREE.Scene();
-
-      renderer = new THREE.WebGLRenderer({ antialias: true });
-
-      renderer.setSize(width, height);
-      renderer.setClearColor(0x888888, 1);
-      camera = new THREE.PerspectiveCamera(
-        20, // fov = field of view
-        width / height, // aspect ratio
-        0.1, // near plane
-        4000 // far plane
-      );
-      camera.position.z = 1;
-      camera.position.x = 100;
-      mountRef.current.appendChild(renderer.domElement);
-      let controls = new OrbitControls(camera, renderer.domElement);
+      scene?.remove(mesh);
+      scene?.remove(sphere);
+      mesh = null;
+      sphere = null;
+    } else {
+      await loadFile();
     }
   }, [modelFile]);
+
+  const handleMouseDown = () => {
+    if (sphere) {
+      //scene?.add(sphere);
+    }
+  };
+  const handleMouseUp = () => {
+    if (sphere) {
+      scene?.remove(sphere);
+    }
+  };
+
+  useEffect(() => {
+    initialize();
+    addLights();
+    animate();
+    window.addEventListener("resize", handleWindowResize);
+
+    return () => {
+      window.removeEventListener("resize", handleWindowResize);
+      mountRef.current.innerHTML = "";
+    };
+  }, []);
 
   const addLights = () => {
     const light = new THREE.AmbientLight(0xf0f0f0); // soft white light
     scene.add(light);
     const intensity = 0.2;
 
-    // const ambientLight = new THREE.HemisphereLight(
-    //   "white", // bright sky color
-    //   "darkslategrey", // dim ground color
-    //   5 // intensity
-    // );
-    //scene.add(ambientLight);
     const pHeight = 100;
     var sunLight = new THREE.PointLight(0xffffff, intensity);
     sunLight.position.set(0, pHeight, 100);
@@ -202,84 +221,125 @@ export default function TestViewer() {
 
   function setMaterial() {
     if (mesh) {
+      const duration = 500;
+      const newColor = new THREE.Color(currentMaterial.color);
+      var t = new TWEEN.Tween(mesh.material)
+        .to(
+          {
+            roughness: currentMaterial.roughness,
+            metalness: currentMaterial.metalness,
+          },
+          duration
+        )
+        .onUpdate(function () {
+          //   console.log(this.roughness);
+        })
+        .start();
+
+      t = new TWEEN.Tween(mesh.material.color)
+        .to(
+          {
+            r: newColor.r,
+            g: newColor.g,
+            b: newColor.b,
+          },
+          duration
+        )
+        .onUpdate(function () {
+          //   console.log(this.roughness);
+        })
+        .start();
+
       mesh.material.color.set(currentMaterial.color);
-      mesh.material.roughness = currentMaterial.roughness
+      //   mesh.material.roughness = currentMaterial.roughness
+      //     ? currentMaterial.roughness
+      //     : 0.5;
+      //   mesh.material.metalness = currentMaterial.metalness
+      //     ? currentMaterial.metalness
+      //     : 1;
+
+      sphere.material.color.set(currentMaterial.color);
+      sphere.material.roughness = currentMaterial.roughness
         ? currentMaterial.roughness
         : 0.5;
-      mesh.material.metalness = currentMaterial.metalness
+      sphere.material.metalness = currentMaterial.metalness
         ? currentMaterial.metalness
         : 1;
     }
   }
 
+  function getCenterPoint(mesh) {
+    var middle = new THREE.Vector3();
+    var geometry1 = mesh.geometry;
+
+    geometry1.computeBoundingBox();
+
+    middle.x = (geometry1.boundingBox.max.x + geometry1.boundingBox.min.x) / 2;
+    middle.y = (geometry1.boundingBox.max.y + geometry1.boundingBox.min.y) / 2;
+    middle.z = (geometry1.boundingBox.max.z + geometry1.boundingBox.min.z) / 2;
+
+    mesh.localToWorld(middle);
+    return middle;
+  }
+
+  const toBase64 = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+
   async function loadFile() {
-    const file = modelFile;
-    if (!file) {
+    if (!initialized) {
+      setTimeout(async () => {
+        await loadFile();
+      }, 1000);
       return;
     }
 
-    const toBase64 = (file) =>
-      new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onloadend = () => resolve(reader.result);
-        reader.onerror = (error) => reject(error);
+    handleWindowResize();
+
+    async function loadPrintInfo(file) {
+      //WASM
+      const slicer = new CuraWASM({
+        /*
+         * The 3D printer definition to slice for (See the src/definitions directory
+         * or https://github.com/Ultimaker/Cura/tree/master/resources/definitions
+         * for a list of built-in definitions)
+         */
+        command:
+          "slice -j definitions/printer.def.json -o Model.gcode -s infill=100 -s layer_height=0.02 -l Model.stl",
+        definition: resolveDefinition("creality_ender3"),
       });
 
-    const asData = await toBase64(file);
-    name = file.name;
+      //Load your STL as an ArrayBuffer
+      const stl = await fileToArrayBuffer(file);
 
-    const loader = new STLLoader();
+      //Progress logger (Ranges from 0 to 100)
+      slicer.on("progress", (percent) => {
+        setProgress(percent);
+      });
 
-    //WASM
-    function _base64ToArrayBuffer(base64) {
-      var binary_string = atob(base64);
-      var len = binary_string.length;
-      var bytes = new Uint8Array(len);
-      for (var i = 0; i < len; i++) {
-        bytes[i] = binary_string.charCodeAt(i);
-      }
-      return bytes.buffer;
+      //Slice (This can take multiple minutes to resolve!)
+      const { gcode, metadata } = await slicer.slice(stl, "stl");
+      setMetaData(metadata);
+
+      // const gLoader = new GCodeLoader();
+      // const gCodeGroup = await gLoader.loadAsync(gcode);
+      // console.log(gCodeGroup);
+
+      //Do something with the GCODE (ArrayBuffer)
+      //WASM END
     }
 
-    const slicer = new CuraWASM({
-      /*
-       * The 3D printer definition to slice for (See the src/definitions directory
-       * or https://github.com/Ultimaker/Cura/tree/master/resources/definitions
-       * for a list of built-in definitions)
-       */
-      command:
-        "slice -j definitions/printer.def.json -o Model.gcode -s infill=100 -s layer_height=0.02 -l Model.stl",
-      definition: resolveDefinition("creality_ender3"),
-    });
+    async function displayFile(file) {
+      const asData = await toBase64(file);
+      name = file.name;
 
-    //Load your STL as an ArrayBuffer
-    const stl = await fileToArrayBuffer(file);
+      const loader = new STLLoader();
 
-    //Progress logger (Ranges from 0 to 100)
-    slicer.on("progress", (percent) => {
-      console.log(`Progress: ${percent}%`);
-    });
-
-    //Slice (This can take multiple minutes to resolve!)
-    const { gcode, metadata } = await slicer.slice(stl, "stl");
-    console.log(metadata);
-    setMetaData(metadata);
-
-    console.log(gcode);
-
-    const gLoader = new GCodeLoader();
-    gLoader.load(gcode, function (data) {
-      console.log(data);
-      //   var layers = data[0];
-      //   console.log(layers);
-      //   var layerIndices = data[1];
-    });
-
-    //Do something with the GCODE (ArrayBuffer)
-    //WASM END
-
-    loader.load(asData, async (geometry) => {
+      const geometry = await loader.loadAsync(asData);
       var material = new THREE.MeshStandardMaterial();
       mesh = new THREE.Mesh(geometry, material);
       mesh.name = name;
@@ -297,26 +357,9 @@ export default function TestViewer() {
 
       mesh.castShadow = true;
       mesh.receiveShadow = true;
-      setMaterial();
       const el = scene.getObjectByName(name);
 
       scene.remove(boxHelper);
-      function getCenterPoint(mesh) {
-        var middle = new THREE.Vector3();
-        var geometry = mesh.geometry;
-
-        geometry.computeBoundingBox();
-
-        middle.x =
-          (geometry.boundingBox.max.x + geometry.boundingBox.min.x) / 2;
-        middle.y =
-          (geometry.boundingBox.max.y + geometry.boundingBox.min.y) / 2;
-        middle.z =
-          (geometry.boundingBox.max.z + geometry.boundingBox.min.z) / 2;
-
-        mesh.localToWorld(middle);
-        return middle;
-      }
 
       var boxCenter = getCenterPoint(el);
       el.position.set(-boxCenter.x, -boxCenter.y, -boxCenter.z);
@@ -349,49 +392,103 @@ export default function TestViewer() {
           (camera.position.z * endDistance) / startDistance
         );
         camera.lookAt(center);
+
+        const col = document.getElementsByClassName("fullSpace");
+        console.log(col);
+        col[0].style.transition = "none";
+        col[0].style.opacity = 1;
+        col[0].classList.add("fadeInAnim");
       }
 
       let longestSide = size.x > size.y ? size.x : size.y;
       longestSide = size.z > longestSide ? size.z : longestSide;
       fitCameraToObject(camera, el, longestSide * 2);
 
-      addLights();
+      const sphereGeo = new THREE.SphereGeometry(longestSide / 2);
+      material = new THREE.MeshBasicMaterial();
+      material.wireframe = true;
+      if (sphere) {
+        scene.remove(sphere);
+      }
+      sphere = new THREE.Mesh(sphereGeo, material);
+      setMaterial();
+    }
 
-      animate();
-    });
+    await Promise.all([loadPrintInfo(modelFile), displayFile(modelFile)]);
+  }
+
+  const [fileInput, setFileInput] = useState(undefined);
+  /**
+   * Handler zum Öffnen einer Datei
+   */
+  function handleOpen() {
+    fileInput.click();
+  }
+
+  async function open(e) {
+    await loadModel(e.name, e);
   }
 
   function setRoughness(val) {
     mesh.material.roughness = val;
-    console.log("roughness set to:", val);
   }
 
   function setMetalness(val) {
     mesh.material.metalness = val;
-    console.log("metalness set to:", val);
   }
 
-  if (!modelFile) {
-    return <div ref={mountRef}></div>;
+  function setPolygons(val) {
+    mesh.material.wireframe = val;
   }
 
   return (
     <div className="border">
-      <input
-        type="range"
-        min="0"
-        max="1"
-        step="0.02"
-        onChange={(e) => setRoughness(e.target.value)}
-      />
-      <input
-        type="range"
-        min="0"
-        max="1"
-        step="0.02"
-        onChange={(e) => setMetalness(e.target.value)}
-      />
-      <div className="fullSpace" ref={mountRef}></div>
+      {!modelFile ? (
+        <div className="big">
+          <h5>
+            STL Datei hochladen{" "}
+            <a href="#" className="uploadIcon">
+              <FontAwesomeIcon onClick={handleOpen} icon={faCube} />
+            </a>
+            <input
+              type="file"
+              className="hidden"
+              onChange={(e) => open(e.target.files[0])}
+              ref={(input) => setFileInput(input)}
+            ></input>
+          </h5>
+        </div>
+      ) : null}
+      {modelFile ? (
+        <>
+          {/* <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.02"
+            onChange={(e) => setRoughness(e.target.value)}
+          />
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.02"
+            onChange={(e) => setMetalness(e.target.value)}
+          /> */}
+          {/* <input
+            type="checkbox"
+            step="0.02"
+            onChange={(e) => setPolygons(e.target.checked)}
+          /> */}
+        </>
+      ) : null}
+      <div
+        id="fullSpaceSection"
+        onMouseDown={() => handleMouseDown()}
+        onMouseUp={() => handleMouseUp()}
+        className="fullSpace"
+        ref={mountRef}
+      ></div>
     </div>
   );
 }

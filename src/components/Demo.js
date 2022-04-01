@@ -6,14 +6,13 @@ import "../index.css";
 
 export default function Demo() {
   const {
-    loading,
     hasModel,
-    model,
     metaData,
     modelSize,
     fileName,
     loadModel,
     clearModel,
+    progress,
   } = useModel();
 
   const { materials, currentMaterial, setMaterial } = useMaterial();
@@ -22,12 +21,20 @@ export default function Demo() {
     setMaterial(materials[index]);
   }
 
-  function setFile(file) {
-    loadModel(file.name, file);
-  }
-
   function clear() {
-    clearModel();
+    function removeFadeOut(el, speed) {
+      var seconds = speed / 1000;
+      el.style.transition = "opacity " + seconds + "s ease";
+      el.style.opacity = 0;
+      setTimeout(function () {}, speed);
+    }
+    const duration = 200;
+    removeFadeOut(document.getElementById("printControlSection"), duration);
+    removeFadeOut(document.getElementById("fullSpaceSection"), duration);
+
+    setTimeout(() => {
+      clearModel();
+    }, duration);
   }
 
   let sizeString = "";
@@ -41,7 +48,10 @@ export default function Demo() {
     return Math.round(value * 100) / 100;
   }
 
-  let metaString = "";
+  let estimated = "";
+  let filamentUsage = "";
+  let grams = "";
+  let costs = "";
   if (metaData) {
     const estimatedTime = `${Math.floor(
       metaData.printTime / 3600
@@ -50,11 +60,13 @@ export default function Demo() {
     )}s`;
 
     const cm3 = metaData.filamentUsage / 1000.0;
-    const grams = cm3 * 1.24;
-    const euros = grams * 0.001 * 25; // 25€ für 1kg
-    metaString = `Filamentnutzung: ${round2(cm3)}cm³, ${round2(
-      grams
-    )}g Material, Druckzeit: ${estimatedTime}, Kosten: ${round2(euros)}€`;
+    const gram = cm3 * 1.24;
+    const euros = gram * 0.001 * 25; // 25€ für 1kg
+
+    filamentUsage = `Filamentnutzung: ${round2(cm3)}cm³`;
+    grams = `Materialnutzung: ${round2(gram)}g`;
+    estimated = `Druckzeit: ${estimatedTime}`;
+    costs = `Kosten: ${round2(euros)}€`;
   }
 
   var groupBy = function (xs, key) {
@@ -72,16 +84,10 @@ export default function Demo() {
   if (hasModel) {
     // console.log(materials);
     return (
-      <div>
-        Model: {fileName} loaded.{" "}
-        <div>
-          <h3>
-            Abmessungen: <small>{sizeString}</small>
-          </h3>
-          <h3>
-            Druckinfo: <small>{metaString}</small>
-          </h3>
-        </div>
+      <div className="printControl" id="printControlSection">
+        <small className="bottomRightFixed">
+          <i>{fileName}</i>
+        </small>
         <input type="button" value="Leeren" onClick={() => clear()} />
         <select
           value={materials.indexOf(currentMaterial)}
@@ -106,14 +112,37 @@ export default function Demo() {
             })}
           </optgroup>
         </select>
+        {progress < 100 ? (
+          <>
+            <div className="lds-ring">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+            {progress} % <i>(slicing) </i>
+          </>
+        ) : (
+          <ul className="infoBox noList">
+            <dt>Abmessungen</dt>
+            <li>{sizeString}</li>
+            <dt>Abmessungen</dt>
+            <li>{estimated}</li>
+            <dt>Abmessungen</dt>
+            <li>{filamentUsage}</li>
+            <dt>Abmessungen</dt>
+            <li>{grams}</li>
+            <dt>Abmessungen</dt>
+            <li>{costs}</li>
+          </ul>
+        )}
       </div>
     );
   }
-
   return (
     <>
-      <input type="file" onChange={(e) => setFile(e.target.files[0])} />
-      {materials.map((material) => {
+      {/* <input type="file" onChange={(e) => setFile(e.target.files[0])} /> */}
+      {/* {materials.map((material) => {
         return (
           <div
             className="rectangle"
@@ -124,7 +153,7 @@ export default function Demo() {
             {material.name}
           </div>
         );
-      })}
+      })} */}
     </>
   );
 }

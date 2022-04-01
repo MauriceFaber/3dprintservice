@@ -6,12 +6,6 @@
     "metalness": "0.8",
     "roughness": "0.8"
   },
-  {
-    "material": "PLA",
-    "name": "Fire Red2",
-    "color": "#FF0000",
-    "metalness": "0.8",
-    "roughness": "0.8"
   },
   {
     "material": "PLA",
@@ -28,6 +22,13 @@
     "roughness": "1"
   },
   {
+    "material": "PLA",
+    "name": "Yellow Glow",
+    "color": "#ffff43",
+    "metalness": "0.5",
+    "roughness": "1"
+  },
+  {
     "material": "PETG",
     "name": "Dark Blue",
     "color": "#0000FF",
@@ -37,7 +38,7 @@
   {
     "material": "PETG",
     "name": "Off black",
-    "color": "#060606",
+    "color": "#090909",
     "metalness": "0",
     "roughness": "0.8"
   },
