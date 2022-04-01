@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import * as THREE from "@three";
+import * as THREE from "three";
 import { useModel } from "../contexts/ModelContext";
 import { STLLoader } from "@three/examples/jsm/loaders/STLLoader";
 import { useMaterial } from "../contexts/MaterialContext";
