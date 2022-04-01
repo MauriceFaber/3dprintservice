@@ -30,9 +30,37 @@ code {
   list-style: none;
 }
 
+.big {
+  position: fixed;
+  left: 50%;
+  top: 30%;
+  transform: translate(-50%, 0);
+  font-size: 60px;
+  animation: 2s ease 0s 1 slideInFromTop;
+}
+
 @media screen and (max-width: 500px) {
   .infoBox {
     width: calc(100% - 20px);
+  }
+
+  @keyframes slideInFromTop2 {
+    0% {
+      transform: translate(5%, -20%);
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+      transform: translate(5%, 0);
+    }
+  }
+
+  .big {
+    margin: 10px;
+    left: 0;
+    top: 30%;
+    transform: translate(5%, 0);
+    animation: 2s ease 0s 1 slideInFromTop2;
   }
 }
 
@@ -81,15 +109,6 @@ code {
 
 .printControl {
   animation: 2s ease 0s 1 fadeIn;
-}
-
-.big {
-  position: fixed;
-  left: 50%;
-  top: 30%;
-  transform: translate(-50%, 0);
-  font-size: 60px;
-  animation: 2s ease 0s 1 slideInFromTop;
 }
 
 .rectangle {
