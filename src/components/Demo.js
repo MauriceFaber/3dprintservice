@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useMaterial } from "../contexts/MaterialContext";
 import { useModel } from "../contexts/ModelContext";
 
