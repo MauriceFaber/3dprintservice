@@ -12,6 +12,7 @@
     "cura-wasm-definitions": "^1.5.1",
     "drei": "^2.2.21",
     "file-to-array-buffer": "^1.0.0",
+    "fs": "*",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "5.0.0",

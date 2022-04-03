@@ -123,7 +123,7 @@ export default function TestViewer() {
     }
   };
 
-  useEffect(() => {
+  useEffect(async () => {
     initialize();
     addLights();
     animate();
@@ -189,7 +189,7 @@ export default function TestViewer() {
     rectLight.castShadow = true;
     scene.add(rectLight);
 
-    let rectLightHelper = new RectAreaLightHelper(rectLight, rectLight.color);
+    // let rectLightHelper = new RectAreaLightHelper(rectLight, rectLight.color);
     // scene.add(rectLightHelper);
 
     rectLight = new THREE.RectAreaLight(0xffffff, 1, w, h);
@@ -198,7 +198,7 @@ export default function TestViewer() {
     rectLight.castShadow = true;
     scene.add(rectLight);
 
-    rectLightHelper = new RectAreaLightHelper(rectLight, rectLight.color);
+    // rectLightHelper = new RectAreaLightHelper(rectLight, rectLight.color);
     // scene.add(rectLightHelper);
 
     rectLight = new THREE.RectAreaLight(0xffffff, 1, w, h);
@@ -207,7 +207,7 @@ export default function TestViewer() {
     rectLight.castShadow = true;
     scene.add(rectLight);
 
-    rectLightHelper = new RectAreaLightHelper(rectLight, rectLight.color);
+    // rectLightHelper = new RectAreaLightHelper(rectLight, rectLight.color);
     // scene.add(rectLightHelper);
 
     rectLight = new THREE.RectAreaLight(0xffffff, 1, w, h);
@@ -216,7 +216,7 @@ export default function TestViewer() {
     rectLight.castShadow = true;
     scene.add(rectLight);
 
-    rectLightHelper = new RectAreaLightHelper(rectLight, rectLight.color);
+    // rectLightHelper = new RectAreaLightHelper(rectLight, rectLight.color);
     // scene.add(rectLightHelper);
   };
 
@@ -302,16 +302,17 @@ export default function TestViewer() {
     handleWindowResize();
 
     async function loadPrintInfo(file) {
-      //WASM
+      let overrides = require("./ender3overrides.json");
+
       const slicer = new CuraWASM({
         /*
          * The 3D printer definition to slice for (See the src/definitions directory
          * or https://github.com/Ultimaker/Cura/tree/master/resources/definitions
          * for a list of built-in definitions)
          */
-        command:
-          "slice -j definitions/printer.def.json -o Model.gcode -s infill=100 -s layer_height=0.02 -l Model.stl",
+        // command: "slice -o Model.gcode -l Model.stl",
         definition: resolveDefinition("creality_ender3"),
+        overrides: overrides,
       });
 
       //Load your STL as an ArrayBuffer

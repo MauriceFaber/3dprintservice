@@ -1,0 +1,30 @@
+[
+  {
+    "key": "layer_height",
+    "value": "0.2"
+  },
+  {
+    "key": "infill_line_distance",
+    "value": "1.0"
+  },
+  {
+    "key": "infill_pattern",
+    "value": "cubic"
+  },
+  {
+    "key": "top_layers",
+    "value": "3"
+  },
+  {
+    "key": "bottom_layers",
+    "value": "3"
+  },
+  {
+    "key": "wall_line_count",
+    "value": "3"
+  },
+  {
+    "key": "support_enbaled",
+    "value": "false"
+  }
+]
