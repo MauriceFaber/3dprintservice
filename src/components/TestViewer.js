@@ -458,6 +458,13 @@ export default function TestViewer() {
     mesh.material.wireframe = val;
   }
 
+  async function setDemo() {
+    localStorage.setItem("3d_model_fileName", "DemoItem.stl");
+    var text = require("./demoItem.json");
+    localStorage.setItem("3d_model_file", text.data);
+    await reloadFile();
+  }
+
   return (
     <div className="border">
       {!modelFile ? (
@@ -467,6 +474,13 @@ export default function TestViewer() {
             <a href="#" className="uploadIcon">
               <FontAwesomeIcon className="animatedArrow" icon={faArrowDown} />
               <FontAwesomeIcon onClick={handleOpen} icon={faCube} />
+            </a>
+            <a
+              href="#"
+              onClick={async () => await setDemo()}
+              className="fixedBottomRight demoButton"
+            >
+              Demo
             </a>
             <input
               type="file"

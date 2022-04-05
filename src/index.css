@@ -12,6 +12,12 @@ code {
     monospace;
 }
 
+.demoButton {
+  color: gray;
+  font-size: 30px;
+  text-decoration: none;
+}
+
 .infoBox {
   float: right;
   zoom: 0.8;
