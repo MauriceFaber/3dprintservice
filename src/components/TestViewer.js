@@ -428,6 +428,7 @@ export default function TestViewer() {
       }
       sphere = new THREE.Mesh(sphereGeo, material);
       setMaterial();
+      animate();
     }
 
     await Promise.all([loadPrintInfo(modelFile), displayFile(modelFile)]);
