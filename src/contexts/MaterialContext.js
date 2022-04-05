@@ -2,19 +2,17 @@ import React, { useState, useEffect } from "react";
 import createCtx from "./Index";
 
 export const [useMaterial, CtxProvider] = createCtx();
-
+let materialLoaded = false;
 export default function MaterialProvider(props) {
   const [materials, setMaterials] = useState([]);
   const [currentMaterial, setCurrentMaterial] = useState(null);
 
-  useEffect(() => {
-    let filaments = require("./materials.json");
-    setMaterials(filaments);
-    // console.log(filaments);
-  }, []);
+  if (!materialLoaded) {
+    setMaterials(require("./materials.json"));
+    materialLoaded = true;
+  }
 
   useEffect(() => {
-    // console.log(materials);
     if (materials) {
       setCurrentMaterial(materials[0]);
     }

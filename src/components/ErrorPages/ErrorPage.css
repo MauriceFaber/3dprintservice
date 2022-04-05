@@ -1,0 +1,8 @@
+.notFound {
+  font-size: 25px;
+  position: absolute;
+  width: 270px;
+  margin-left: -135px;
+  left: 50%;
+  top: 30%;
+}

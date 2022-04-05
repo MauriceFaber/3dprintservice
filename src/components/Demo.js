@@ -39,9 +39,9 @@ export default function Demo() {
 
   let sizeString = "";
   if (modelSize) {
-    sizeString = `l: ${Math.ceil(modelSize.x)}mm b: ${Math.ceil(
+    sizeString = `${Math.ceil(modelSize.x)}x${Math.ceil(
       modelSize.y
-    )}mm h: ${Math.ceil(modelSize.z)}mm`;
+    )}x${Math.ceil(modelSize.z)}mm`;
   }
 
   function round2(value) {
@@ -63,10 +63,10 @@ export default function Demo() {
     const gram = cm3 * 1.24;
     const euros = gram * 0.001 * 25; // 25€ für 1kg
 
-    filamentUsage = `Filamentnutzung: ${round2(cm3)}cm³`;
-    grams = `Materialnutzung: ${round2(gram)}g`;
-    estimated = `Druckzeit: ${estimatedTime}`;
-    costs = `Kosten: ${round2(euros)}€`;
+    filamentUsage = `${round2(cm3)}cm³`;
+    grams = `${round2(gram)}g`;
+    estimated = `${estimatedTime}`;
+    costs = `${round2(euros)}€`;
   }
 
   var groupBy = function (xs, key) {
@@ -81,78 +81,72 @@ export default function Demo() {
   }
   const groupedMaterials = groupBy(materials, "material");
 
+  if (!hasModel) {
+    return null;
+  }
   if (hasModel) {
     return (
-      <div className="printControl" id="printControlSection">
-        <small className="bottomRightFixed">
+      <>
+        <small className="bottomRightFixed disable-select">
           <i>{fileName}</i>
         </small>
-        <input type="button" value="Leeren" onClick={() => clear()} />
-        <select
-          value={materials.indexOf(currentMaterial)}
-          onChange={(e) => onMaterialSelect(e.currentTarget.value)}
-        >
-          <optgroup label="PLA">
-            {groupedMaterials.PLA.map((material) => {
-              return (
-                <option key={material.name} value={material.index}>
-                  {material.name}
-                </option>
-              );
-            })}
-          </optgroup>
-          <optgroup label="PETG">
-            {groupedMaterials.PETG.map((material) => {
-              return (
-                <option key={material.name} value={material.index}>
-                  {material.name}
-                </option>
-              );
-            })}
-          </optgroup>
-        </select>
-        {progress < 100 ? (
-          <>
-            <div className="lds-ring">
-              <div></div>
-              <div></div>
-              <div></div>
-              <div></div>
-            </div>
-            {progress} % <i>(slicing) </i>
-          </>
-        ) : (
-          <ul className="infoBox noList">
-            <dt>Abmessungen</dt>
-            <li>{sizeString}</li>
-            <dt>Abmessungen</dt>
-            <li>{estimated}</li>
-            <dt>Abmessungen</dt>
-            <li>{filamentUsage}</li>
-            <dt>Abmessungen</dt>
-            <li>{grams}</li>
-            <dt>Abmessungen</dt>
-            <li>{costs}</li>
+        <div className="printControl" id="printControlSection">
+          <input type="button" value="Unload" onClick={() => clear()} />
+          <select
+            value={materials.indexOf(currentMaterial)}
+            onChange={(e) => onMaterialSelect(e.currentTarget.value)}
+          >
+            <optgroup label="PLA">
+              {groupedMaterials.PLA.map((material) => {
+                return (
+                  <option key={material.name} value={material.index}>
+                    {material.name}
+                  </option>
+                );
+              })}
+            </optgroup>
+            <optgroup label="PETG">
+              {groupedMaterials.PETG.map((material) => {
+                return (
+                  <option key={material.name} value={material.index}>
+                    {material.name}
+                  </option>
+                );
+              })}
+            </optgroup>
+          </select>
+          {progress < 100 ? (
+            <>
+              <div className="lds-ring">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+              {progress} % <i>(slicing) </i>
+            </>
+          ) : null}
+        </div>
+        {progress === 100 ? (
+          <ul className="infoBox noList disable-select">
+            <li>
+              <b>Measurements</b> {sizeString}
+            </li>
+            <li>
+              <b>Print time</b> {estimated}
+            </li>
+            <li>
+              <b>Material usage</b> {filamentUsage}
+            </li>
+            <li>
+              <b>Weight</b> {grams}
+            </li>
+            <li>
+              <b>Costs</b> {costs}
+            </li>
           </ul>
-        )}
-      </div>
+        ) : null}
+      </>
     );
   }
-  return (
-    <>
-      {/* <input type="file" onChange={(e) => setFile(e.target.files[0])} /> */}
-      {/* {materials.map((material) => {
-        return (
-          <div
-            className="rectangle"
-            style={{ backgroundColor: material.color }}
-            key={material.name + "box"}
-            value={material.index}
-          >
-            {material.name}
-          </div>
-        );
-      })} */}
-    </>
-  );
 }

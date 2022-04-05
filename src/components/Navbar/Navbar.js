@@ -26,27 +26,22 @@ export default function Navbar() {
     <nav className="NavbarItems">
       <h1 className="navbar-logo">
         <a className="appCaption" href="/">
-          3D Druck Service
+          3D Print Service
         </a>
-        <img className="appIcon" src="/Lehsetreff.png" alt="icon"></img>
       </h1>
-      <div className="menu-icon" onClick={handleClick}>
-        <i className={clicked ? "fas fa-times" : "fas fa-bars"}></i>
-      </div>
       <ul className={clicked ? "nav-menu active" : "nav-menu"}>
         <li>
-          <a className="nav-links" href="/profile">
-            Profil
+          <a className="nav-links" href="/configurator">
+            Configurator
           </a>
         </li>
-
         <li>
-          <a href="/rightsManagement" className="nav-links">
-            Rechteverwaltung
+          <a className="nav-links" href="/aboutus">
+            About us
           </a>
         </li>
 
-        {MenuItems.map((item, index) => {
+        {/* {MenuItems.map((item, index) => {
           if (item.title == "Abmelden") {
             return (
               <li key={index}>
@@ -64,10 +59,10 @@ export default function Navbar() {
               </a>
             </li>
           );
-        })}
+        })} */}
       </ul>
 
-      {authenticated ? (
+      {/* {authenticated ? (
         <a href="#" onClick={onSignOut}>
           <Button>Abmelden</Button>
         </a>
@@ -75,7 +70,7 @@ export default function Navbar() {
         <a href="/login">
           <Button>Anmelden</Button>
         </a>
-      )}
+      )} */}
     </nav>
   );
 }

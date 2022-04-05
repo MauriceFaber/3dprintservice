@@ -11,10 +11,11 @@ import fileToArrayBuffer from "file-to-array-buffer";
 // import { GCodeLoader } from "three/examples/jsm/loaders/GCodeLoader";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCube } from "@fortawesome/free-solid-svg-icons";
+import { faArrowDown, faCube } from "@fortawesome/free-solid-svg-icons";
 import TWEEN from "tween";
 
 import "../index.css";
+import { render } from "react-dom";
 
 let mesh;
 let sphere;
@@ -22,9 +23,18 @@ let scene;
 let initialized = false;
 let camera;
 var renderer;
+let rendered = false;
 export default function TestViewer() {
-  const { modelFile, setModelSize, setMetaData, setProgress, loadModel } =
-    useModel();
+  const {
+    hasModel,
+    fileName,
+    modelFile,
+    setModelSize,
+    setMetaData,
+    setProgress,
+    loadModel,
+    reloadFile,
+  } = useModel();
   const { currentMaterial } = useMaterial();
 
   const mountRef = useRef(null);
@@ -71,6 +81,9 @@ export default function TestViewer() {
   };
 
   useEffect(async () => {
+    if (!hasModel) {
+      return;
+    }
     setMaterial();
   }, [currentMaterial]);
 
@@ -102,7 +115,7 @@ export default function TestViewer() {
   }
 
   useEffect(async () => {
-    if (!modelFile) {
+    if (!hasModel) {
       scene?.remove(mesh);
       scene?.remove(sphere);
       mesh = null;
@@ -110,7 +123,7 @@ export default function TestViewer() {
     } else {
       await loadFile();
     }
-  }, [modelFile]);
+  }, [hasModel]);
 
   const handleMouseDown = () => {
     if (sphere) {
@@ -128,7 +141,7 @@ export default function TestViewer() {
     addLights();
     animate();
     window.addEventListener("resize", handleWindowResize);
-
+    // await reloadFile();
     return () => {
       window.removeEventListener("resize", handleWindowResize);
       mountRef.current.innerHTML = "";
@@ -232,9 +245,6 @@ export default function TestViewer() {
           },
           duration
         )
-        .onUpdate(function () {
-          //   console.log(this.roughness);
-        })
         .start();
 
       t = new TWEEN.Tween(mesh.material.color)
@@ -246,9 +256,6 @@ export default function TestViewer() {
           },
           duration
         )
-        .onUpdate(function () {
-          //   console.log(this.roughness);
-        })
         .start();
 
       mesh.material.color.set(currentMaterial.color);
@@ -292,6 +299,12 @@ export default function TestViewer() {
     });
 
   async function loadFile() {
+    if (!currentMaterial) {
+      setTimeout(async () => {
+        await loadFile();
+      }, 1000);
+      return;
+    }
     if (!initialized) {
       setTimeout(async () => {
         await loadFile();
@@ -329,15 +342,17 @@ export default function TestViewer() {
 
       // const gLoader = new GCodeLoader();
       // const gCodeGroup = await gLoader.loadAsync(gcode);
-      // console.log(gCodeGroup);
 
       //Do something with the GCODE (ArrayBuffer)
       //WASM END
     }
 
     async function displayFile(file) {
+      if (rendered) {
+        return;
+      }
       const asData = await toBase64(file);
-      name = file.name;
+      name = fileName;
 
       const loader = new STLLoader();
 
@@ -447,8 +462,9 @@ export default function TestViewer() {
       {!modelFile ? (
         <div className="big">
           <h5>
-            STL Datei hochladen{" "}
+            STL Datei hochladen {hasModel ? `(${fileName})` : null}
             <a href="#" className="uploadIcon">
+              <FontAwesomeIcon className="animatedArrow" icon={faArrowDown} />
               <FontAwesomeIcon onClick={handleOpen} icon={faCube} />
             </a>
             <input
