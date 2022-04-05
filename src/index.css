@@ -49,8 +49,8 @@ code {
   z-index: 4;
   left: 50%;
   top: 30%;
-  width: 460px;
-  margin-left: -230px;
+  width: 470px;
+  margin-left: -235px;
   font-size: 50px;
   animation: 2s ease 0s 1 slideInFromTop;
 }
