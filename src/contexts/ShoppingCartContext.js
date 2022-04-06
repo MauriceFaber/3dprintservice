@@ -10,6 +10,10 @@ export default function ShoppingCartProvider(props) {
     await loadFromLocalStorage();
   }, []);
 
+  useEffect(async () => {
+    await saveToLocalStorage();
+  }, [positions]);
+
   function readFileAsync(file) {
     return new Promise((resolve, reject) => {
       let reader = new FileReader();
@@ -57,7 +61,6 @@ export default function ShoppingCartProvider(props) {
       setPositions(tmpPositions);
     } else {
       setPositions([]);
-      await saveToLocalStorage();
     }
   }
 
@@ -81,7 +84,6 @@ export default function ShoppingCartProvider(props) {
       } else {
         tmpPositions.push({ blob, name, count, singlePrice, color });
         setPositions(tmpPositions);
-        await saveToLocalStorage();
       }
       result = true;
     }
@@ -97,7 +99,6 @@ export default function ShoppingCartProvider(props) {
       if (count > 0) {
         data.count = count;
         setPositions(tmpPositions);
-        await saveToLocalStorage();
       } else {
         removePosition(name, color);
       }
@@ -110,12 +111,10 @@ export default function ShoppingCartProvider(props) {
       (p) => !(p.name === name && p.color.name === color.name)
     );
     setPositions(tmpPositions);
-    await saveToLocalStorage();
   };
 
   const clearCart = async () => {
     setPositions([]);
-    await saveToLocalStorage();
   };
 
   const contextValue = {

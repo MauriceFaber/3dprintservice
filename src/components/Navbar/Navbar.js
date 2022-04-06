@@ -45,8 +45,11 @@ export default function Navbar() {
           </a>
         </li>
         <li>
-          <a className="nav-links visible" href="/cart">
+          <a className="nav-links visible relative" href="/cart">
             <FontAwesomeIcon icon={faCartShopping} />
+            {positions.length > 0 ? (
+              <span className="badge">{positions.length}</span>
+            ) : null}
           </a>
         </li>
 

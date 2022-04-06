@@ -4,7 +4,7 @@ import ShoppingCartItem from "./ShoppingCartItem";
 import "./ShoppingCart.css";
 
 export default function ShoppingCart() {
-  const { positions } = useShoppingCart();
+  const { positions, clearCart } = useShoppingCart();
   const sum = positions.reduce(
     (partialSum, a) => partialSum + a.count * a.singlePrice,
     0
@@ -17,29 +17,38 @@ export default function ShoppingCart() {
   };
   return (
     <div className="default-page">
-      <h1>ShoppingCart</h1>
-      <h2>Positions</h2>
-      <table className="shopping-cart-table">
-        <thead>
-          <tr>
-            <th>Position</th>
-            <th>Single price</th>
-            <th>Count</th>
-            <th>Price</th>
-          </tr>
-        </thead>
-        <tbody>
-          {positions.map(function (position, index) {
-            return (
-              <ShoppingCartItem
-                key={`${position.name}_${position.color.name}`}
-                position={position}
-              />
-            );
-          })}
-          <ShoppingCartItem className="sum" key="sum" position={tmpItem} />
-        </tbody>
-      </table>
+      <h1>Shopping Cart</h1>
+      {positions.length > 0 ? (
+        <>
+          <h2>Positions</h2>
+          <table className="shopping-cart-table">
+            <thead>
+              <tr>
+                <th>Position</th>
+                <th>Single price</th>
+                <th>Count</th>
+                <th>Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              {positions.map(function (position, index) {
+                return (
+                  <ShoppingCartItem
+                    key={`${position.name}_${position.color.name}`}
+                    position={position}
+                  />
+                );
+              })}
+              <ShoppingCartItem className="sum" key="sum" position={tmpItem} />
+            </tbody>
+          </table>
+          <button onClick={clearCart} className="clear-cart-button">
+            Clear
+          </button>
+        </>
+      ) : (
+        <p>No items in your shopping cart.</p>
+      )}
     </div>
   );
 }

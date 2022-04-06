@@ -40,11 +40,10 @@ export default function ShoppingCartItem({ position }) {
       style={{
         backgroundColor: position.color?.color ? position.color.color : "white",
       }}
-      id={`item_${position.name}`}
     >
       <td>
         <a onClick={open} className="cart-item-name" href="#">
-          {position.name}
+          {!position.isSum ? position.name : <b>Total</b>}
         </a>
       </td>
       <td>{!position.isSum ? singlePriceDisplay : null}</td>

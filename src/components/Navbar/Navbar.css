@@ -75,6 +75,25 @@
   display: none;
 }
 
+.relative {
+  position: relative;
+}
+
+.badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(4px, -4px);
+  border-radius: 6px;
+  background-color: rgb(70, 70, 70);
+  color: white;
+  border: 2px solid white;
+  font-size: 12px;
+  width: 14px;
+  height: 14px;
+  font-weight: bold;
+}
+
 /* @media screen and (max-width: 800px) {
   .nav-menu {
     background-color: #6668f4;
