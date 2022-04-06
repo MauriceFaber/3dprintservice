@@ -43,8 +43,8 @@
     margin-left: -130px;
   }
 
-  .nav-menu {
-    visibility: hidden;
+  .nav-links {
+    visibility: collapse;
   }
 
   .center-menu {

@@ -14,12 +14,24 @@ export default function MaterialProvider(props) {
 
   useEffect(() => {
     if (materials) {
-      setCurrentMaterial(materials[0]);
+      var success = false;
+      const storedName = localStorage.getItem("selected_material_name");
+      if (storedName) {
+        const mat = materials.find((m) => m.name === storedName);
+        if (mat) {
+          setCurrentMaterial(mat);
+          success = true;
+        }
+      }
+      if (!success) {
+        setCurrentMaterial(materials[0]);
+      }
     }
   }, [materials]);
 
   const setMaterial = (material) => {
     setCurrentMaterial(material);
+    localStorage.setItem("selected_material_name", material.name);
   };
 
   const contextValue = {

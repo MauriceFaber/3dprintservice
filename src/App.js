@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./components/Home/Home";
 import AboutUs from "./components/AboutUs/AboutUs";
 import ErrorPage from "./components/ErrorPages/ErrorPage";
+import ShoppingCart from "./components/ShoppingCart/ShoppingCart";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <div className="mainDiv">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/cart" element={<ShoppingCart />} />
           <Route path="/aboutus" element={<AboutUs />} />
           <Route
             path="/configurator"

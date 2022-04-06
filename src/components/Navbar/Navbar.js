@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { MenuItems } from "./MenuItems";
 import "./Navbar.css";
 import { Button } from "./Button";
+import { useShoppingCart } from "../../contexts/ShoppingCartContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 
 /**
  * Erstellt die Benutzeransicht entsprechend der Berechtigungen.
@@ -11,6 +14,7 @@ import { Button } from "./Button";
  */
 export default function Navbar() {
   const [clicked, setClicked] = useState(false);
+  const { positions } = useShoppingCart();
 
   const authenticated = false;
 
@@ -29,7 +33,7 @@ export default function Navbar() {
           3D Print Service
         </a>
       </h1>
-      <ul className={clicked ? "nav-menu active" : "nav-menu"}>
+      <ul className="nav-menu">
         <li>
           <a className="nav-links" href="/configurator">
             Configurator
@@ -38,6 +42,11 @@ export default function Navbar() {
         <li>
           <a className="nav-links" href="/aboutus">
             About us
+          </a>
+        </li>
+        <li>
+          <a className="nav-links visible" href="/cart">
+            <FontAwesomeIcon icon={faCartShopping} />
           </a>
         </li>
 
