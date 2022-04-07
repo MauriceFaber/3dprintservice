@@ -64,7 +64,7 @@ export default function TestViewer() {
     obj.rotateOnAxis(axis, theta); // rotate the OBJECT
   }
 
-  var animate = function(time) {
+  var animate = function (time) {
     requestAnimationFrame(animate);
     TWEEN.update();
     renderer.render(scene, camera);
@@ -134,6 +134,10 @@ export default function TestViewer() {
     }
   };
 
+  const intervalId = setInterval(() => {
+    animate();
+  }, 1000);
+
   useEffect(async () => {
     initialize();
     addLights();
@@ -143,6 +147,7 @@ export default function TestViewer() {
     return () => {
       window.removeEventListener("resize", handleWindowResize);
       mountRef.current.innerHTML = "";
+      clearInterval(intervalId);
     };
   }, []);
 
