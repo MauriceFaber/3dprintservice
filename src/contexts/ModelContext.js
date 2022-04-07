@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import createCtx from "./Index";
+import Localbase from "localbase";
 
 export const [useModel, CtxProvider] = createCtx();
 
@@ -12,6 +13,9 @@ export default function ModelProvider(props) {
   const [modelSize, setSize] = useState();
   const [progress, setProgressIntern] = useState(0);
   const [metaData, setMetadata] = useState();
+
+  const db = new Localbase("db");
+  db.config.debug = false;
 
   useEffect(async () => {
     await reloadFile();
@@ -33,21 +37,7 @@ export default function ModelProvider(props) {
     await loadFromLocalStorage();
   };
 
-  function readFileAsync(file) {
-    return new Promise((resolve, reject) => {
-      let reader = new FileReader();
-
-      reader.onload = () => {
-        resolve(reader.result);
-      };
-
-      reader.onerror = reject;
-
-      reader.readAsDataURL(file);
-    });
-  }
-
-  function dataURItoBlob(dataURI) {
+  const dataURItoBlob = (dataURI) => {
     // convert base64 to raw binary data held in a string
     // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
     var byteString = atob(dataURI.split(",")[1]);
@@ -70,27 +60,27 @@ export default function ModelProvider(props) {
 
     //New Code
     return new Blob([ab], { type: mimeString });
-  }
+  };
 
   async function saveToLocalStorage(fileName, file) {
     if (!fileName || !file) {
-      localStorage.removeItem("3d_model_fileName");
-      localStorage.removeItem("3d_model_file");
+      await db.collection("3d_model").doc({ id: 1 }).delete();
     } else {
-      const buffer = await readFileAsync(file);
-      localStorage.setItem("3d_model_fileName", fileName);
-      localStorage.setItem("3d_model_file", buffer);
+      let tmpFile = await db.collection("3d_model").doc({ id: 1 }).get();
+      if (tmpFile) {
+        await db.collection("3d_model").doc({ id: 1 }).update({ data: file });
+      } else {
+        await db.collection("3d_model").add({ id: 1, data: file });
+      }
     }
   }
 
   async function loadFromLocalStorage() {
-    let file = localStorage.getItem("3d_model_file");
-    let fileName = localStorage.getItem("3d_model_fileName");
+    let file = await db.collection("3d_model").doc({ id: 1 }).get();
 
-    if (file && fileName) {
-      const blob = dataURItoBlob(file);
-      setFileName(fileName);
-      setModelFile(blob);
+    if (file && file.data) {
+      setFileName(file.data.name);
+      setModelFile(file.data);
       setHasModel(true);
     } else {
       setHasModel(false);
@@ -137,6 +127,7 @@ export default function ModelProvider(props) {
     setMetaData,
     setProgress,
     reloadFile,
+    dataURItoBlob,
   };
   return <CtxProvider value={contextValue}>{props.children}</CtxProvider>;
 }

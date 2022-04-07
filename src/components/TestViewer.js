@@ -32,6 +32,7 @@ export default function TestViewer() {
     setProgress,
     loadModel,
     reloadFile,
+    dataURItoBlob,
   } = useModel();
   const { currentMaterial } = useMaterial();
 
@@ -462,10 +463,9 @@ export default function TestViewer() {
   }
 
   async function setDemo() {
-    localStorage.setItem("3d_model_fileName", "DemoItem.stl");
-    var text = require("./demoItem.json");
-    localStorage.setItem("3d_model_file", text.data);
-    await reloadFile();
+    var fileContent = require("./demoItem.json");
+    const blob = dataURItoBlob(fileContent.data);
+    await loadModel("DemoItem.stl", blob);
   }
 
   return (

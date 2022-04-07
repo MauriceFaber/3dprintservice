@@ -8,7 +8,7 @@ export default function ShoppingCartProvider(props) {
   const [positions, setPositions] = useState([]);
 
   const db = new Localbase("db");
-  //   db.config.debug = false;
+  db.config.debug = false;
 
   useEffect(async () => {
     await loadFromLocalStorage();
@@ -126,16 +126,14 @@ export default function ShoppingCartProvider(props) {
     tmpPositions = tmpPositions.filter(
       (p) => !(p.name === name && p.color.name === color.name)
     );
-    await db
-      .collection("shopping_cart_data")
-      .doc({ name, color })
-      .delete();
+    await db.collection("shopping_cart_data").doc({ name, color }).delete();
 
     setPositions(tmpPositions);
   };
 
   const clearCart = async () => {
     setPositions([]);
+    await db.collection("shopping_cart_data").delete();
   };
 
   const contextValue = {
