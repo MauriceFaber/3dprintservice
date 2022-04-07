@@ -35,18 +35,23 @@ export default function ShoppingCartItem({ position }) {
   }
 
   return (
-    <tr
-      className="shopping-cart-item"
-      style={{
-        backgroundColor: position.color?.color ? position.color.color : "white",
-      }}
-    >
+    <tr className="shopping-cart-item">
       <td>
         <a onClick={open} className="cart-item-name" href="#">
           {!position.isSum ? position.name : <b>Total</b>}
         </a>
       </td>
-      <td>{!position.isSum ? singlePriceDisplay : null}</td>
+      <td>
+        <div
+          className="colorBox"
+          style={{
+            backgroundColor: position.color?.color
+              ? position.color.color
+              : "white",
+          }}
+        ></div>
+      </td>
+      {/* <td>{!position.isSum ? singlePriceDisplay : null}</td> */}
       <td>
         {!position.isSum ? (
           <>
@@ -55,7 +60,9 @@ export default function ShoppingCartItem({ position }) {
               onClick={substractOne}
               icon={faMinus}
             />
+            &nbsp;
             <span className="count">{position.count}</span>
+            &nbsp;
             <FontAwesomeIcon
               className="button"
               onClick={addOne}

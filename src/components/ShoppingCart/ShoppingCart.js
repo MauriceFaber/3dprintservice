@@ -25,7 +25,8 @@ export default function ShoppingCart() {
             <thead>
               <tr>
                 <th>Position</th>
-                <th>Single price</th>
+                <th>Color</th>
+                {/* <th>Single price</th> */}
                 <th>Count</th>
                 <th>Price</th>
               </tr>
