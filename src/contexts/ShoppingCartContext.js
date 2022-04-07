@@ -1,61 +1,70 @@
 import React, { useState, useEffect } from "react";
 import createCtx from "./Index";
+import Localbase from "localbase";
 
 export const [useShoppingCart, CtxProvider] = createCtx();
 
 export default function ShoppingCartProvider(props) {
   const [positions, setPositions] = useState([]);
 
+  const db = new Localbase("db");
+  //   db.config.debug = false;
+
   useEffect(async () => {
     await loadFromLocalStorage();
   }, []);
 
   useEffect(async () => {
-    await saveToLocalStorage();
+    // await saveToLocalStorage();
   }, [positions]);
 
-  function readFileAsync(file) {
-    return new Promise((resolve, reject) => {
-      let reader = new FileReader();
+  //   function readFileAsync(file) {
+  //     return new Promise((resolve, reject) => {
+  //       let reader = new FileReader();
 
-      reader.onload = () => {
-        resolve(reader.result);
-      };
+  //       reader.onload = () => {
+  //         resolve(reader.result);
+  //       };
 
-      reader.onerror = reject;
+  //       reader.onerror = reject;
 
-      reader.readAsDataURL(file);
-    });
-  }
+  //       reader.readAsDataURL(file);
+  //     });
+  //   }
 
-  function dataURItoBlob(dataURI) {
-    var byteString = atob(dataURI.split(",")[1]);
-    var mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
-    var ab = new ArrayBuffer(byteString.length);
-    var ia = new Uint8Array(ab);
-    for (var i = 0; i < byteString.length; i++) {
-      ia[i] = byteString.charCodeAt(i);
-    }
-    return new Blob([ab], { type: mimeString });
-  }
+  //   function dataURItoBlob(dataURI) {
+  //     var byteString = atob(dataURI.split(",")[1]);
+  //     var mimeString = dataURI
+  //       .split(",")[0]
+  //       .split(":")[1]
+  //       .split(";")[0];
+  //     var ab = new ArrayBuffer(byteString.length);
+  //     var ia = new Uint8Array(ab);
+  //     for (var i = 0; i < byteString.length; i++) {
+  //       ia[i] = byteString.charCodeAt(i);
+  //     }
+  //     return new Blob([ab], { type: mimeString });
+  //   }
 
-  async function saveToLocalStorage() {
-    let tmpPositions = positions.slice();
-    for (let i = 0; i < tmpPositions.length; i++) {
-      let tmp = tmpPositions[i];
-      tmp.data = tmp.blob ? await readFileAsync(tmp.blob) : "";
-    }
-    localStorage.setItem("positions_data", JSON.stringify(tmpPositions));
-  }
+  //   async function saveToLocalStorage() {
+  //     let tmpPositions = positions.slice();
+  //     for (let i = 0; i < tmpPositions.length; i++) {
+  //       let tmp = tmpPositions[i];
+  //       tmp.data = tmp.blob ? await readFileAsync(tmp.blob) : "";
+  //     }
+  //     await db.collection("shopping_cart_data").set(tmpPositions);
+  //     // localStorage.setItem("positions_data", JSON.stringify(tmpPositions));
+  //   }
 
   async function loadFromLocalStorage() {
-    let data = localStorage.getItem("positions_data");
-    let tmpPositions = JSON.parse(data);
-    if (data) {
+    let tmpPositions = await db.collection("shopping_cart_data").get();
+    // let data = localStorage.getItem("positions_data");
+    // let tmpPositions = JSON.parse(data);
+    if (tmpPositions) {
       if (tmpPositions && tmpPositions.length >= 0) {
         for (let i = 0; i < tmpPositions.length; i++) {
           let tmp = tmpPositions[i];
-          tmp.blob = tmp.data ? dataURItoBlob(tmp.data) : "";
+          //   tmp.blob = tmp.data ? dataURItoBlob(tmp.data) : "";
         }
       }
       setPositions(tmpPositions);
@@ -80,9 +89,11 @@ export default function ShoppingCartProvider(props) {
         (p) => p.name === name && p.color.name === color.name
       );
       if (equalPosition && equalPosition.length > 0) {
-        changePosition(name, equalPosition[0].count + count, color);
+        await changePosition(name, equalPosition[0].count + count, color);
       } else {
-        tmpPositions.push({ blob, name, count, singlePrice, color });
+        var obj = { blob, name, count, singlePrice, color };
+        await db.collection("shopping_cart_data").add(obj);
+        tmpPositions.push(obj);
         setPositions(tmpPositions);
       }
       result = true;
@@ -98,9 +109,14 @@ export default function ShoppingCartProvider(props) {
     if (data) {
       if (count > 0) {
         data.count = count;
+        await db
+          .collection("shopping_cart_data")
+          .doc({ name, color })
+          .update({ count: count });
+
         setPositions(tmpPositions);
       } else {
-        removePosition(name, color);
+        await removePosition(name, color);
       }
     }
   };
@@ -110,6 +126,11 @@ export default function ShoppingCartProvider(props) {
     tmpPositions = tmpPositions.filter(
       (p) => !(p.name === name && p.color.name === color.name)
     );
+    await db
+      .collection("shopping_cart_data")
+      .doc({ name, color })
+      .delete();
+
     setPositions(tmpPositions);
   };
 
