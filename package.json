@@ -20,6 +20,7 @@
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.0",
     "react-three-fiber": "^6.0.13",
+    "three": "^0.139.2",
     "three-gcode-loader": "^1.0.7",
     "tween": "^0.9.0"
   },

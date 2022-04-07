@@ -135,7 +135,7 @@ export default function TestViewer() {
   };
 
   const intervalId = setInterval(() => {
-    animate();
+    handleWindowResize();
   }, 1000);
 
   useEffect(async () => {
