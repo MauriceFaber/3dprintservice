@@ -95,10 +95,15 @@ export default function Demo() {
     }, {});
   };
 
+  if (!materials || materials.length === 0) {
+    return null;
+  }
+
   for (var i = 0; i < materials.length; i++) {
     materials[i].index = i;
   }
   const groupedMaterials = groupBy(materials, "material");
+  console.log(groupedMaterials);
 
   if (!hasModel) {
     return null;
@@ -131,6 +136,24 @@ export default function Demo() {
             </optgroup>
             <optgroup label="PETG">
               {groupedMaterials.PETG.map((material) => {
+                return (
+                  <option key={material.name} value={material.index}>
+                    {material.name}
+                  </option>
+                );
+              })}
+            </optgroup>
+            <optgroup label="TPU">
+              {groupedMaterials.TPU.map((material) => {
+                return (
+                  <option key={material.name} value={material.index}>
+                    {material.name}
+                  </option>
+                );
+              })}
+            </optgroup>
+            <optgroup label="TPC">
+              {groupedMaterials.TPC.map((material) => {
                 return (
                   <option key={material.name} value={material.index}>
                     {material.name}
