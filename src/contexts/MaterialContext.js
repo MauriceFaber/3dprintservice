@@ -9,11 +9,10 @@ export default function MaterialProvider(props) {
 
   useEffect(async () => {
     const domainInfo = require("./domain.json");
-    const testMode = true;
+    const testMode = false;
     const domain = testMode ? domainInfo.testDomain : domainInfo.domain;
     const res = await fetch(domain + "/materials");
     const asJson = await res.json();
-    console.log(asJson);
     if (res.ok) {
       setMaterials(asJson);
     }
