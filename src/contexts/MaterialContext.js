@@ -7,10 +7,17 @@ export default function MaterialProvider(props) {
   const [materials, setMaterials] = useState([]);
   const [currentMaterial, setCurrentMaterial] = useState(null);
 
-  if (!materialLoaded) {
-    setMaterials(require("./materials.json"));
-    materialLoaded = true;
-  }
+  useEffect(async () => {
+    const domainInfo = require("./domain.json");
+    const testMode = true;
+    const domain = testMode ? domainInfo.testDomain : domainInfo.domain;
+    const res = await fetch(domain + "/materials");
+    const asJson = await res.json();
+    console.log(asJson);
+    if (res.ok) {
+      setMaterials(asJson);
+    }
+  }, []);
 
   useEffect(() => {
     if (materials) {
